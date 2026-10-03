@@ -1,3 +1,12 @@
+/*
+ * Eyelash Corne - keymap da Renee
+ * Macros e tap dances recuperadas do firmware antigo (corne_left-nice_nano-zmk.uf2)
+ * e adaptadas para o layout do Eyelash Corne.
+ *
+ * Os acentos usam teclas mortas: o sistema operacional precisa estar no layout
+ * "Inglês (EUA) - Internacional" (US International), como no teclado antigo.
+ */
+
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200  // 600
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 25   // 10
 
@@ -13,14 +22,75 @@
 
 &soft_off { hold-time-ms = <2000>; };
 
+#define ACENTO(label, nome, k1, k2)                     \
+    label: label {                                      \
+        compatible = "zmk,behavior-macro";              \
+        display-name = nome;                            \
+        #binding-cells = <0>;                           \
+        wait-ms = <15>;                                 \
+        tap-ms = <30>;                                  \
+        bindings = <&macro_tap &kp k1 &kp k2>;          \
+    };
+
+#define TD(label, nome, ...)                            \
+    label: label {                                      \
+        compatible = "zmk,behavior-tap-dance";          \
+        display-name = nome;                            \
+        #binding-cells = <0>;                           \
+        tapping-term-ms = <250>;                        \
+        bindings = __VA_ARGS__;                         \
+    };
+
 / {
+    macros {
+        // Tecla morta + letra (US International)
+        ACENTO(m_cedilha,    "ç", SQT,        C)
+        ACENTO(m_aagudo,     "á", SQT,        A)
+        ACENTO(m_eagudo,     "é", SQT,        E)
+        ACENTO(m_iagudo,     "í", SQT,        I)
+        ACENTO(m_oagudo,     "ó", SQT,        O)
+        ACENTO(m_uagudo,     "ú", SQT,        U)
+        ACENTO(m_acrase,     "à", GRAVE,      A)
+        ACENTO(m_atil,       "ã", LS(GRAVE),  A)
+        ACENTO(m_otil,       "õ", LS(GRAVE),  O)
+        ACENTO(m_ntil,       "ñ", LS(GRAVE),  N)
+        ACENTO(m_acirc,      "â", LS(N6),     A)
+        ACENTO(m_ecirc,      "ê", LS(N6),     E)
+        ACENTO(m_ocirc,      "ô", LS(N6),     O)
+    };
+
     behaviors {
-        td0: td0 {
-            compatible = "zmk,behavior-tap-dance";
-            display-name = "Shift/Caps Lock Tap Dance";
-            #binding-cells = <0>;
-            bindings = <&kp LEFT_SHIFT>, <&kp CAPS>;
-        };
+        // Letras: 1 toque = letra, 2/3/4 toques = acentos
+        TD(td_a,     "a á ã à", <&kp A>, <&m_aagudo>, <&m_atil>, <&m_acrase>)
+        TD(td_e,     "e é ê",   <&kp E>, <&m_eagudo>, <&m_ecirc>)
+        TD(td_i,     "i í",     <&kp I>, <&m_iagudo>)
+        TD(td_o,     "o ó õ ô", <&kp O>, <&m_oagudo>, <&m_otil>, <&m_ocirc>)
+        TD(td_u,     "u ú",     <&kp U>, <&m_uagudo>)
+        TD(td_c,     "c ç",     <&kp C>, <&m_cedilha>)
+        TD(td_n,     "n ñ",     <&kp N>, <&m_ntil>)
+
+        // Pontuação e símbolos: 1 toque | 2 toques | 3 toques
+        TD(td_pvirg,  "; '",     <&kp SEMI>, <&kp SQT>)
+        TD(td_virg,   ", .",     <&kp COMMA>, <&kp DOT>)
+        TD(td_barra,  "/ \\ |",  <&kp FSLH>, <&kp BSLH>, <&kp PIPE>)
+        TD(td_arroba, "@ _",     <&kp AT>, <&kp UNDER>)
+        TD(td_interr, "? !",     <&kp QMARK>, <&kp EXCL>)
+        TD(td_paren,  "( )",     <&kp LPAR>, <&kp RPAR>)
+        TD(td_colch,  "[ ]",     <&kp LBKT>, <&kp RBKT>)
+        TD(td_chave,  "{ }",     <&kp LBRC>, <&kp RBRC>)
+        TD(td_menor,  "< >",     <&kp LT>, <&kp GT>)
+        TD(td_mult,   "* /",     <&kp ASTRK>, <&kp FSLH>)
+        TD(td_soma,   "+ -",     <&kp PLUS>, <&kp MINUS>)
+        TD(td_agudo,  "´ `",     <&kp SQT>, <&kp GRAVE>)
+        TD(td_til,    "~ ^",     <&kp TILDE>, <&kp CARET>)
+
+        // Bluetooth: 1 toque = perfil 0/2, 2 toques = perfil 1/3
+        TD(td_blue1,  "BT 0/1",  <&bt BT_SEL 0>, <&bt BT_SEL 1>)
+        TD(td_blue2,  "BT 2/3",  <&bt BT_SEL 2>, <&bt BT_SEL 3>)
+
+        // Troca de camada (fixa): toques 1,2 = camada; 5 toques = camada 4 (sistema)
+        TD(td_lay1,   "Camada 0/1", <&to 0>, <&to 1>, <&none>, <&none>, <&to 4>)
+        TD(td_lay2,   "Camada 2/3", <&to 2>, <&to 3>, <&none>, <&none>, <&to 4>)
 
         rsr_vol: rsr_vol {
             compatible = "zmk,behavior-runtime-sensor-rotate";
@@ -37,9 +107,10 @@
         };
     };
 
-   combos {
+    combos {
         compatible = "zmk,combos";
 
+        // Segurar Q + S + Z por 2 s desliga o teclado (padrão do fabricante)
         softoff {
             bindings = <&soft_off>;
             key-positions = <1 15 29>;
@@ -49,51 +120,59 @@
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
-            display-name = "QWERTY";
+        // Teclas do meio: joystick (cima/esquerda/enter/direita/baixo) e clique do encoder
+        layer_0 {
+            display-name = "Base";
             bindings = <
-&kp TAB    &kp Q  &kp W  &kp E     &kp R  &kp T                               &kp UP                &kp Y        &kp U  &kp I      &kp O    &kp P     &kp BSPC
-&td0       &kp A  &kp S  &kp D     &kp F  &kp G                     &kp LEFT  &kp ENTER  &kp RIGHT  &kp H        &kp J  &kp K      &kp L    &kp SEMI  &kp SQT
-&kp LCTRL  &kp Z  &kp X  &kp C     &kp V  &kp B        &kp SPACE              &kp DOWN              &kp N        &kp M  &kp COMMA  &kp DOT  &kp FSLH  &kp ESC
-                         &kp LGUI  &mo 1  &lt 3 SPACE                                               &lt 3 ENTER  &mo 2  &kp RALT
+&kp ESC    &kp Q   &kp W  &td_e  &kp R     &kp T                          &kp UP                 &kp Y      &td_u     &td_i       &td_o      &kp P       &kp BSPC
+&kp TAB    &td_a   &kp S  &kp D  &kp F     &kp G                &kp LEFT  &kp ENTER  &kp RIGHT   &kp H      &kp J     &kp K       &kp L      &td_pvirg   &td_paren
+&kp LSHFT  &kp Z   &kp X  &td_c  &kp V     &kp B     &kp SPACE            &kp DOWN               &td_n      &kp M     &td_virg    &td_interr &td_barra   &td_arroba
+                          &kp LALT  &td_lay1  &kp SPACE                                          &kp ENTER  &td_lay2  &kp LGUI
             >;
-
             sensor-bindings = <&rsr_vol &rsr_trans>;
         };
 
-        lower_layer {
-            display-name = "NUMBER";
+        layer_1 {
+            display-name = "F/Simbolos";
             bindings = <
-&trans  &kp N1           &kp N2          &kp N3        &kp N4        &kp N5                                         &mmv MOVE_UP                     &kp N6           &kp N7           &kp N8           &kp N9           &kp N0    &kp BSPC
-&trans  &bt BT_CLR_ALL   &bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3                   &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp LEFT         &kp DOWN         &kp UP           &kp RIGHT        &kp HOME  &kp PG_UP
-&trans  &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &trans        &trans        &rgb_ug RGB_EFF  &kp C_MUTE                    &mmv MOVE_DOWN                   &rgb_ug RGB_EFR  &rgb_ug RGB_SPI  &rgb_ug RGB_BRI  &rgb_ug RGB_BRD  &kp END   &kp PG_DN
-                                         &trans        &trans        &trans                                                                          &kp INS          &kp DEL          &trans
+&kp F1      &kp F2      &kp F3       &kp F4      &kp F5     &kp F6                         &trans                 &kp F7     &kp F8      &kp F9    &kp F10    &kp F11  &kp F12
+&kp EXCL    &kp AT      &kp HASH     &kp DLLR    &kp PRCNT  &kp CARET             &trans   &trans     &trans      &td_menor  &td_colch   &kp HOME  &kp PG_UP  &none    &td_blue1
+&kp AMPS    &kp ASTRK   &kp RA(SEMI) &none       &none      &none      &trans              &trans                 &td_chave  &none       &kp END   &kp PG_DN  &none    &td_blue2
+                                     &kp LGUI    &td_lay1   &kp SPACE                                             &kp ENTER  &td_lay2    &kp RALT
             >;
-
             sensor-bindings = <&rsr_vol &rsr_trans>;
         };
 
-        raise_layer {
-            display-name = "SYMBOL";
+        layer_2 {
+            display-name = "Numeros";
             bindings = <
-&trans  &kp EXCL      &kp AT        &kp HASH   &kp DLLR   &kp PRCNT                            &mmv MOVE_UP                     &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &kp BSPC
-&trans  &bt BT_CLR    &mkp LCLK     &mkp MCLK  &mkp RCLK  &mkp MB4             &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp MINUS  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH  &kp GRAVE
-&trans  &out OUT_USB  &out OUT_BLE  &none      &none      &mkp MB5   &trans                    &mmv MOVE_DOWN                   &kp UNDER  &kp PLUS   &kp LBRC   &kp RBRC  &kp PIPE  &kp TILDE
-                                    &trans     &trans     &kp SPACE                                                             &kp RET    &trans     &trans
+&kp TAB     &kp LC(LS(C)) &kp AT        &kp HASH        &kp DLLR   &kp F2                        &trans               &td_mult   &kp N7     &kp N8  &kp N9  &td_paren  &kp BSPC
+&kp LSHFT   &kp LC(LS(V)) &kp RA(SEMI)  &kp AMPS        &kp PRCNT  &kp ESC             &trans    &trans     &trans    &td_soma   &kp N4     &kp N5  &kp N6  &td_colch  &td_virg
+&kp LCTRL   &td_chave     &td_interr    &kp UNDER       &kp CARET  &kp EQUAL &trans              &trans               &kp N0     &kp N1     &kp N2  &kp N3  &kp PRCNT  &kp EQUAL
+                                        &kp LALT        &td_lay1   &kp SPACE                                          &kp ENTER  &td_lay2   &kp LGUI
             >;
-
             sensor-bindings = <&rsr_vol &rsr_trans>;
         };
 
         layer_3 {
-            display-name = "Fn";
+            display-name = "Mouse";
             bindings = <
-&studio_unlock  &kp F1      &kp F2     &kp F3       &kp F4     &kp F5                                  &mmv MOVE_UP                     &kp F6       &kp F7     &kp F8       &kp F9      &kp F10          &kp F11
-&trans          &trans      &mkp LCLK  &mkp MCLK    &mkp RCLK  &mkp MB4                &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &bootloader  &mkp LCLK  &mkp MCLK    &mkp RCLK   &kp PRINTSCREEN  &kp F12
-&trans          &sys_reset  &trans     &bootloader  &trans     &mkp MB5  &kp C_MUTE                    &mmv MOVE_DOWN                   &trans       &trans     &bootloader  &sys_reset  &kp SCROLLLOCK   &kp PAUSE_BREAK
-                                       &trans       &trans     &trans                                                                   &trans       &trans     &trans
+&msc SCRL_UP    &mkp LCLK       &mmv MOVE_UP    &mkp RCLK        &mkp MB4   &mkp MCLK                    &mmv MOVE_UP                       &none   &none     &kp UP    &none      &td_mult  &kp BSPC
+&msc SCRL_DOWN  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &mkp MB5   &none           &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &none   &kp LEFT  &kp DOWN  &kp RIGHT  &none     &kp LSHFT
+&msc SCRL_LEFT  &msc SCRL_RIGHT &none           &msc SCRL_RIGHT  &none      &none     &kp C_MUTE             &mmv MOVE_DOWN                     &none   &none     &none     &none      &none     &kp LCTRL
+                                                &none            &td_lay1   &none                                                               &none   &td_lay2  &kp LALT
             >;
+            sensor-bindings = <&rsr_vol &rsr_trans>;
+        };
 
+        layer_4 {
+            display-name = "Sistema";
+            bindings = <
+&bt BT_CLR      &none   &trans  &trans  &trans    &bootloader                     &trans                    &bt BT_CLR      &trans    &trans  &none   &none   &bootloader
+&bt BT_CLR_ALL  &trans  &trans  &trans  &trans    &sys_reset             &trans   &trans     &trans         &bt BT_CLR_ALL  &trans    &trans  &trans  &trans  &sys_reset
+&trans          &trans  &trans  &trans  &trans    &out OUT_TOG  &trans            &trans                    &trans          &trans    &trans  &none   &none   &out OUT_TOG
+                                        &trans    &td_lay1      &trans                                      &trans          &td_lay2  &trans
+            >;
             sensor-bindings = <&rsr_vol &rsr_trans>;
         };
     };
