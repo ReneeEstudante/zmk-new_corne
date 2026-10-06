@@ -71,9 +71,9 @@
 
         // Pontuação e símbolos: 1 toque | 2 toques | 3 toques
         TD(td_pvirg,  "; '",     <&kp SEMI>, <&kp SQT>)
-        TD(td_virg,   ", . ; \"", <&kp COMMA>, <&kp DOT>, <&kp SEMI>, <&kp DQT>)
-        TD(td_barra,  "/ \\ |",  <&kp FSLH>, <&kp BSLH>, <&kp PIPE>)
-        TD(td_arroba, "@ _ \\ |", <&kp AT>, <&kp UNDER>, <&kp BSLH>, <&kp PIPE>)
+        TD(td_virg,   ", . ; aspas", <&kp COMMA>, <&kp DOT>, <&kp SEMI>, <&kp DQT>)
+        TD(td_barra,  "/ barra pipe",  <&kp FSLH>, <&kp BSLH>, <&kp PIPE>)
+        TD(td_arroba, "@ _ barra pipe", <&kp AT>, <&kp UNDER>, <&kp BSLH>, <&kp PIPE>)
         TD(td_interr, "? !",     <&kp QMARK>, <&kp EXCL>)
         TD(td_paren,  "( ) [ ]", <&kp LPAR>, <&kp RPAR>, <&kp LBKT>, <&kp RBKT>)
         TD(td_colch,  "[ ]",     <&kp LBKT>, <&kp RBKT>)
