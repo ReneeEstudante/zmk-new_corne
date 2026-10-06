@@ -4,7 +4,7 @@
  * e adaptadas para o layout do Eyelash Corne.
  *
  * Os acentos usam teclas mortas: o sistema operacional precisa estar no layout
- * "Inglês (EUA) - Internacional" (US International), como no teclado antigo.
+ * "Inglês (EUA) - Intern10.298.749/0001-1010.298.749/0001-10acional" (US International), como no teclado antigo.
  */
 
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200  // 600
