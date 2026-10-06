@@ -71,21 +71,39 @@
 
         // Pontuação e símbolos: 1 toque | 2 toques | 3 toques
         TD(td_pvirg,  "; '",     <&kp SEMI>, <&kp SQT>)
-        TD(td_virg,   ", .",     <&kp COMMA>, <&kp DOT>)
+        TD(td_virg,   ", . ; \"", <&kp COMMA>, <&kp DOT>, <&kp SEMI>, <&kp DQT>)
         TD(td_barra,  "/ \\ |",  <&kp FSLH>, <&kp BSLH>, <&kp PIPE>)
-        TD(td_arroba, "@ _",     <&kp AT>, <&kp UNDER>)
+        TD(td_arroba, "@ _ \\ |", <&kp AT>, <&kp UNDER>, <&kp BSLH>, <&kp PIPE>)
         TD(td_interr, "? !",     <&kp QMARK>, <&kp EXCL>)
-        TD(td_paren,  "( )",     <&kp LPAR>, <&kp RPAR>)
+        TD(td_paren,  "( ) [ ]", <&kp LPAR>, <&kp RPAR>, <&kp LBKT>, <&kp RBKT>)
         TD(td_colch,  "[ ]",     <&kp LBKT>, <&kp RBKT>)
         TD(td_chave,  "{ }",     <&kp LBRC>, <&kp RBRC>)
-        TD(td_menor,  "< >",     <&kp LT>, <&kp GT>)
+        TD(td_menor,  "< > { }", <&kp LT>, <&kp GT>, <&kp LBRC>, <&kp RBRC>)
         TD(td_mult,   "* /",     <&kp ASTRK>, <&kp FSLH>)
-        TD(td_soma,   "+ -",     <&kp PLUS>, <&kp MINUS>)
-        TD(td_agudo,  "´ `",     <&kp SQT>, <&kp GRAVE>)
+        TD(td_soma,   "+ - / *", <&kp PLUS>, <&kp MINUS>, <&kp FSLH>, <&kp ASTRK>)
+        TD(td_agudo,  "´ ` ^ ~", <&kp SQT>, <&kp GRAVE>, <&kp CARET>, <&kp TILDE>)
         TD(td_til,    "~ ^",     <&kp TILDE>, <&kp CARET>)
 
-        // Bluetooth: 1 toque = perfil 0/2, 2 toques = perfil 1/3
-        TD(td_blue1,  "BT 0/1",  <&bt BT_SEL 0>, <&bt BT_SEL 1>)
+        // Backspace/Delete e Tab/Esc (definidos no layout antigo, sem tecla fixa:
+        // dá para colocar em qualquer tecla pelo ZMK Studio)
+        bkdel: bkdel {
+            compatible = "zmk,behavior-tap-dance";
+            display-name = "Bksp Del";
+            #binding-cells = <0>;
+            tapping-term-ms = <210>;
+            bindings = <&kp BSPC>, <&kp DEL>;
+        };
+
+        tabesc: tabesc {
+            compatible = "zmk,behavior-tap-dance";
+            display-name = "Tab Esc";
+            #binding-cells = <0>;
+            tapping-term-ms = <220>;
+            bindings = <&kp TAB>, <&kp ESC>;
+        };
+
+        // Bluetooth: perfis por número de toques
+        TD(td_blue1,  "BT 0/1/2/4", <&bt BT_SEL 0>, <&bt BT_SEL 1>, <&bt BT_SEL 2>, <&bt BT_SEL 4>)
         TD(td_blue2,  "BT 2/3",  <&bt BT_SEL 2>, <&bt BT_SEL 3>)
 
         // Troca de camada (fixa): toques 1,2 = camada; 5 toques = camada 4 (sistema)
@@ -127,7 +145,7 @@
 &kp ESC    &kp Q   &kp W  &td_e  &kp R     &kp T                          &kp UP                 &kp Y      &td_u     &td_i       &td_o      &kp P       &kp BSPC
 &kp TAB    &td_a   &kp S  &kp D  &kp F     &kp G                &kp LEFT  &kp ENTER  &kp RIGHT   &kp H      &kp J     &kp K       &kp L      &td_pvirg   &td_paren
 &kp LSHFT  &kp Z   &kp X  &td_c  &kp V     &kp B     &kp SPACE            &kp DOWN               &td_n      &kp M     &td_virg    &td_interr &td_barra   &td_arroba
-                          &kp LALT  &td_lay1  &kp SPACE                                          &kp ENTER  &td_lay2  &kp LGUI
+                          &kp LCTRL &td_lay1  &kp SPACE                                          &kp ENTER  &td_lay2  &kp LCTRL
             >;
             sensor-bindings = <&rsr_vol &rsr_trans>;
         };
@@ -137,7 +155,7 @@
             bindings = <
 &kp F1      &kp F2      &kp F3       &kp F4      &kp F5     &kp F6                         &trans                 &kp F7     &kp F8      &kp F9    &kp F10    &kp F11  &kp F12
 &kp EXCL    &kp AT      &kp HASH     &kp DLLR    &kp PRCNT  &kp CARET             &trans   &trans     &trans      &td_menor  &td_colch   &kp HOME  &kp PG_UP  &none    &td_blue1
-&kp AMPS    &kp ASTRK   &kp RA(SEMI) &none       &none      &none      &trans              &trans                 &td_chave  &none       &kp END   &kp PG_DN  &none    &td_blue2
+&kp AMPS    &kp ASTRK   &kp RA(SEMI) &none       &none      &none      &trans              &trans                 &td_chave  &kp DEL     &kp END   &kp PG_DN  &none    &td_blue2
                                      &kp LGUI    &td_lay1   &kp SPACE                                             &kp ENTER  &td_lay2    &kp RALT
             >;
             sensor-bindings = <&rsr_vol &rsr_trans>;
