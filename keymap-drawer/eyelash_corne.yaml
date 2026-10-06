@@ -43,12 +43,12 @@ layers:
   - '&td_interr'
   - '&td_barra'
   - '&td_arroba'
-  - $$mdi:apple-keyboard-option$$
+  - $$mdi:apple-keyboard-control$$
   - '&td_lay1'
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
   - '&td_lay2'
-  - LGUI
+  - $$mdi:apple-keyboard-control$$
   F/Simbolos:
   - F1
   - F2
@@ -87,7 +87,7 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - '&td_chave'
-  - {t: '$$mdi:minus-circle-outline$$', type: none}
+  - $$mdi:backspace-reverse-outline$$
   - END
   - PG DN
   - {t: '$$mdi:minus-circle-outline$$', type: none}
